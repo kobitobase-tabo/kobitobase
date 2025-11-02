@@ -51,7 +51,7 @@ export default function Kobitonoiwa() {
   // 過去のにわごとリスト（必要に応じて追加OK）
   const pastMonths = [
     { m: 10, label: "10月のにわごと", img: "/thumbnails/month10.jpg" },
-    { m: 9, label: "9月のにわごと", img: "/thumbnails/default.jpg" },
+    { m: 9, label: "9月のにわごと", img: "/thumbnails/preparation.jpg" },
   ];
 
   return (
