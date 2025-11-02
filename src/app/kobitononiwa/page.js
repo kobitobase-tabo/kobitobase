@@ -7,6 +7,22 @@ import Footer from "@/components/Footer";
 
 export default function Kobitonoiwa() {
   const [openIndex, setOpenIndex] = useState(null);
+  
+  const questions = [
+  {
+    q: "庭づくりを始める一番いい季節は？",
+    a: "春または秋が育てやすい季節です。極端に暑い・寒い時期は避けるのがおすすめです。",
+  },
+  {
+    q: "水やりは毎日必要？",
+    a: "土の表面が乾いてからでOKです。季節や植物によって頻度は変わります🌱",
+  },
+  {
+    q: "肥料はどれを使えばいい？",
+    a: "基本は緩効性肥料＋状況に応じて液肥を使うとバランスが良いです。",
+  }
+];
+
   // 今日の月を自動取得
   const now = new Date();
   const month = now.getMonth() + 1;
