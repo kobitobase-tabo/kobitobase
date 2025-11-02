@@ -56,8 +56,8 @@ export default function RobotDetail() {
         </table>
       </div>
 
-      {/* 動画セクション */
-      <div className="mt-8 w-full max-w-2xl">
+      {/* 動画セクション */}
+      {<div className="mt-8 w-full max-w-2xl">
         <h2 className="text-xl font-bold text-[#4a6b34] mb-3">動画ギャラリー</h2>
         <video
           src="/videos/i_test.mp4"
