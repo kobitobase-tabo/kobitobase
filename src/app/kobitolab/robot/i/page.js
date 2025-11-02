@@ -57,7 +57,7 @@ export default function RobotDetail() {
       </div>
 
       {/* 動画セクション */}
-      {<div className="mt-8 w-full max-w-2xl">
+      {/*<div className="mt-8 w-full max-w-2xl">
         <h2 className="text-xl font-bold text-[#4a6b34] mb-3">動画ギャラリー</h2>
         <video
           src="/videos/i_test.mp4"
@@ -67,7 +67,7 @@ export default function RobotDetail() {
         <p className="text-sm text-[#4a6b34] mt-2 text-center">
           テスト走行（2025年10月） — 対戦形式の様子
         </p>
-      </div>}
+      </div>*/}
 
       <Link
         href="/kobitolab"
