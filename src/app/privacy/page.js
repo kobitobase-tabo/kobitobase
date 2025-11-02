@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link"; // ← 追加！
+
 export default function PrivacyPolicy() {
   return (
     <div className="min-h-screen bg-[#f9fff7] flex flex-col items-center px-4 py-12 text-left">
@@ -58,12 +60,14 @@ export default function PrivacyPolicy() {
           制定：2025年11月
         </p>
       </div>
-      <a
+
+      {/* ← KOBITO BASE に戻る（Link修正版） */}
+      <Link
         href="/"
         className="mt-10 inline-block bg-[#8b7355] text-white py-2 px-6 rounded-lg shadow hover:opacity-90 transition"
       >
         ← KOBITO BASEに戻る
-      </a>
+      </Link>
     </div>
   );
 }
