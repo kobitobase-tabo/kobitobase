@@ -6,6 +6,7 @@ import Link from "next/link";
 import Footer from "@/components/Footer";
 
 export default function Kobitonoiwa() {
+  const [openIndex, setOpenIndex] = useState(null);
   // 今日の月を自動取得
   const now = new Date();
   const month = now.getMonth() + 1;
@@ -113,26 +114,28 @@ export default function Kobitonoiwa() {
             </Link>
           </div>
 
-          {/* Q&A（移動しました！） */}
-          <section className="bg-white rounded-2xl shadow p-6">
-            <h2 className="text-xl font-bold text-[#4a6b34] mb-4">よくある質問</h2>
-            {[
-              { q: "植え替えはいつ？", a: "春か秋の穏やかな時期が最適です🌱" },
-              { q: "肥料はどのくらい？", a: "成長期に2週間に1回が目安です。" },
-              { q: "室内で育てるコツは？", a: "日当たり＆風通しが大切です🍃" },
-            ].map((item, idx) => {
-              const [open, setOpen] = useState(false);
-              return (
-                <div key={idx} className="border-b border-[#dfe8db] py-3">
-                  <button onClick={() => setOpen(!open)} className="w-full flex justify-between">
-                    <span className="text-[#4a6b34] font-semibold">Q. {item.q}</span>
-                    <span className="text-[#6b8e23]">{open ? "−" : "＋"}</span>
-                  </button>
-                  {open && <p className="mt-2 text-[#2e4d2a]">A. {item.a}</p>}
-                </div>
-              );
-            })}
-          </section>
+          {/* Q&Aコーナー */}
+<section className="w-full max-w-3xl mb-12 bg-white rounded-2xl shadow p-6">
+  <h2 className="text-2xl font-bold text-[#4a6b34] mb-4">
+    よくある質問（Q&A）
+  </h2>
+
+  {questions.map((q, index) => (
+    <div key={index} className="border-b border-gray-200 pb-3">
+      <button
+        onClick={() => setOpenIndex(openIndex === index ? null : index)}
+        className="w-full text-left flex justify-between items-center py-2 font-semibold text-[#375a2c]"
+      >
+        {q.q}
+        <span>{openIndex === index ? "▲" : "▼"}</span>
+      </button>
+
+      {openIndex === index && (
+        <p className="mt-2 text-gray-700 leading-relaxed">{q.a}</p>
+      )}
+    </div>
+  ))}
+</section>
 
           {/* プロフィールカード（LAB と同じスタイル） */}
             <div className="relative bg-gradient-to-br from-[#ffffff] to-[#f6fff4] rounded-2xl shadow-lg border border-[#dfe8db] p-6 overflow-hidden">
