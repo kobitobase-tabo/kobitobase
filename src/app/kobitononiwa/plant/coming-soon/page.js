@@ -1,12 +1,24 @@
+"use client";
+
+import Image from "next/image";
 import Link from "next/link";
 
-export default function ComingSoon() {
+export default function MonthPage() {
   return (
-    <main className="min-h-screen bg-[#f9fff7] flex flex-col items-center justify-center text-center px-4">
-      <h1 className="text-3xl font-bold text-[#4a6b34] mb-4">🌱 ただいま準備中です</h1>
-      <p className="text-[#375a2c] mb-6">
-        植物の育て方や特徴を現在まとめています。<br />
-        もうしばらくお待ちください…⏳
+    <main className="flex flex-col items-center justify-center min-h-screen bg-[#fafafa] text-gray-700 text-center px-4">
+
+      <Image
+        src="/images/cat_working.png"
+        alt="準備中"
+        width={220}
+        height={220}
+        className="mx-auto opacity-90 mb-4"
+      />
+
+      <h1 className="text-2xl font-bold mb-2">準備中です🌱</h1>
+      <p className="mb-6">
+        この月の「にわごと」情報は、ただいま作成中です。<br />
+        もうすこしだけお待ちください🐈☕
       </p>
 
       <Link
