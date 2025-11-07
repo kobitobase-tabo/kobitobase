@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { client } from "@/src/sanity/client";
+import { client } from "@/sanity/client";
 import { urlFor } from "@/src/sanity/client";
 
 export const revalidate = 60; // 60秒ごとにキャッシュ更新（お好み）
