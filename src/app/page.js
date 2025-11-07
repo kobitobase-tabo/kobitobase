@@ -61,7 +61,7 @@ export default function Home() {
 
   const articles = {
     topics: [
-      { title: "KOBITO BASEが始まりました！", date: "2025.11.04", link: "/kobitobase/start" },
+      { title: "KOBITO BASEが始まりました！", date: "2025.11.07", link: "/kobitobase/start" },
     ],
     niwa: niwaArticles,
     lab: labArticles,
