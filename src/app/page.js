@@ -2,60 +2,94 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
+import { client } from "../sanity/lib/client"; // ← 重要：このパスなら確実に存在します
 
 // 更新日から7日以内なら New 表示
 const isNew = (dateString) => {
   const now = new Date();
   const articleDate = new Date(dateString);
-  const diff = (now - articleDate) / (1000 * 60 * 60 * 24); // 日数差
+  const diff = (now - articleDate) / (1000 * 60 * 60 * 24);
   return diff <= 7;
 };
 
-
 export default function Home() {
   const [activeTab, setActiveTab] = useState("topics");
+  const [niwaArticles, setNiwaArticles] = useState([]);
+  const [labArticles, setLabArticles] = useState([]);
+
+  // ✅「にわ」記事 → category: "にわ"
+  useEffect(() => {
+    const fetchNiwa = async () => {
+      const query = `*[_type == "column" && category match "にわ"] | order(_updatedAt desc)[0...3]{
+        title,
+        "date": _updatedAt,
+        slug
+      }`;
+      const data = await client.fetch(query);
+      setNiwaArticles(
+        data.map((item) => ({
+          title: item.title,
+          date: item.date.split("T")[0],
+          link: `/kobitononiwa/${item.slug.current}`,
+        }))
+      );
+    };
+    fetchNiwa();
+  }, []);
+
+  // ✅「KOBITO LAB」記事 → category が「にわ」以外
+  useEffect(() => {
+    const fetchLab = async () => {
+      const query = `*[_type == "column" && !(category match "にわ")] | order(_updatedAt desc)[0...3]{
+        title,
+        "date": _updatedAt,
+        slug
+      }`;
+      const data = await client.fetch(query);
+      setLabArticles(
+        data.map((item) => ({
+          title: item.title,
+          date: item.date.split("T")[0],
+          link: `/kobitolab/report/${item.slug.current}`,
+        }))
+      );
+    };
+    fetchLab();
+  }, []);
 
   const articles = {
-  topics: [
-    { title: "KOBITO BASEが始まりました！", date: "2025.11.04", link: "/kobitobase/start" },
-  ],
-  niwa: [
-    { title: "「11月のにわごと」更新しました", date: "2025.11.04", link: "/kobitononiwa/month/11" },
-  ],
-  lab: [
-    { title: "「九州地区予選会出場レポート」更新しました", date: "2025.11.04", link: "/kobitolab/report/kyushu2025" },
-  ],
-};
+    topics: [
+      { title: "KOBITO BASEが始まりました！", date: "2025.11.04", link: "/kobitobase/start" },
+    ],
+    niwa: niwaArticles,
+    lab: labArticles,
+  };
 
-
-const renderArticles = (tab) => (
-  <ul className="divide-y divide-gray-200">
-    {articles[tab].length > 0 ? (
-      articles[tab].map((item, index) => (
-        <li key={index} className="py-3">
-          <div className="flex items-center gap-2">
-            {isNew(item.date) && (
-              <span className="text-white text-xs bg-[#e57300] px-2 py-0.5 rounded-md">
-                New
-              </span>
-            )}
-            <Link href={item.link} className="text-[#4a6b34] font-semibold hover:underline">
-              {item.title}
-            </Link>
-          </div>
-          <p className="text-sm text-gray-500">
-            更新日：{item.date}
-          </p>
-        </li>
-      ))
-    ) : (
-      <li className="py-6 text-gray-500 text-center">準備中です🌱</li>
-    )}
-  </ul>
-);
-
+  const renderArticles = (tab) => (
+    <ul className="divide-y divide-gray-200">
+      {articles[tab].length > 0 ? (
+        articles[tab].map((item, index) => (
+          <li key={index} className="py-3">
+            <div className="flex items-center gap-2">
+              {isNew(item.date) && (
+                <span className="text-white text-xs bg-[#e57300] px-2 py-0.5 rounded-md">
+                  New
+                </span>
+              )}
+              <Link href={item.link} className="text-[#4a6b34] font-semibold hover:underline">
+                {item.title}
+              </Link>
+            </div>
+            <p className="text-sm text-gray-500">更新日：{item.date}</p>
+          </li>
+        ))
+      ) : (
+        <li className="py-6 text-gray-500 text-center">準備中です🌱</li>
+      )}
+    </ul>
+  );
 
   return (
     <main
@@ -120,7 +154,6 @@ const renderArticles = (tab) => (
 
       {/* トピックス欄 */}
       <section className="max-w-[400px] w-full bg-[#fdfcf8] border border-[#e0dcd2] shadow-md rounded-xl p-6 relative overflow-hidden">
-        {/* ノート風の上タブ */}
         <div className="flex justify-around mb-4">
           <button
             onClick={() => setActiveTab("topics")}
@@ -154,12 +187,10 @@ const renderArticles = (tab) => (
           </button>
         </div>
 
-        {/* 本文リスト */}
         <div className="min-h-[200px] bg-white rounded-b-lg p-4 border-t border-[#dcdcdc]">
           {renderArticles(activeTab)}
         </div>
 
-        {/* お知らせリンク追加 */}
         <p className="text-center mt-4">
           <Link href="/kobitobase/news" className="text-[#4a6b34] hover:underline">
             過去のお知らせ一覧へ

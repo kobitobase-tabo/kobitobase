@@ -4,7 +4,22 @@ import Image from "next/image";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 
-export default function KobitoLab() {
+import { client } from "../../sanity/lib/client";
+import { urlFor } from "../../sanity/lib/image";
+
+async function getColumns() {
+  const query = `*[_type == "column"] | order(_createdAt desc){
+    title,
+    thumbnail,
+    category,
+    slug
+  }`;
+  return await client.fetch(query);
+}
+
+export default async function KobitoLab() {
+  const columns = await getColumns();
+
   return (
     <main className="flex flex-col items-center bg-[#f4f4f4] min-h-screen p-6 md:p-12">
       {/* ロゴ */}
@@ -36,45 +51,49 @@ export default function KobitoLab() {
         {/* 左カラム：活動内容・今後の予定 */}
         <section className="md:w-2/3 w-full bg-white rounded-2xl shadow p-6">
           {/* 活動レポートカード一覧 */}
-<h2 className="text-xl font-bold text-[#333] mb-4">活動レポート</h2>
+          <h2 className="text-xl font-bold text-[#333] mb-4">活動レポート</h2>
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-  <a
-    href="/kobitolab/report/kyushu2025"
-    className="block bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
-  >
-    <Image
-      src="/thumbnails/kyushu2025.jpg"
-      alt="九州地区予選会 出場レポート"
-      width={600}
-      height={400}
-      className="w-full h-48 object-cover"
-    />
-    <div className="p-4">
-      <h3 className="text-lg font-bold text-[#4a6b34] mb-1">
-        九州地区予選会 出場レポート
-      </h3>
-      <p className="text-sm text-gray-600 mb-2">2025年11月04日</p>
-      <p className="text-gray-700 text-sm leading-relaxed">
-        初出場となった九州地区予選会のレポートです。
-        大会当日の雰囲気や機体の動き、今後の課題などをまとめました。
-      </p>
-    </div>
-  </a>
-</div>
-{/* 戻るボタン（左カラムに配置） */}
-<div className="text-center mt-8">
-  <Link
-    href="/"
-    className="px-6 py-3 bg-[#8b7355] text-white rounded-xl shadow hover:bg-[#7a6549] transition">
-    ← KOBITO BASE に戻る
-  </Link>
-</div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {columns.map((col) => (
+              <Link
+                key={col.slug.current}
+                href={`/kobitolab/report/${col.slug.current}`}
+                className="block bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
+              >
+                {col.thumbnail && (
+                  <Image
+                    src={urlFor(col.thumbnail).width(600).height(400).url()}
+                    alt={col.title}
+                    width={600}
+                    height={400}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+                <div className="p-4">
+                  {col.category && (
+                    <span className="text-xs px-2 py-1 bg-[#e7efe3] rounded text-[#375a2c]">
+                      {col.category}
+                    </span>
+                  )}
+                  <h3 className="text-lg font-bold text-[#4a6b34] mt-2">{col.title}</h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* 戻るボタン */}
+          <div className="text-center mt-8">
+            <Link
+              href="/"
+              className="px-6 py-3 bg-[#8b7355] text-white rounded-xl shadow hover:bg-[#7a6549] transition"
+            >
+              ← KOBITO BASE に戻る
+            </Link>
+          </div>
         </section>
 
         {/* 右カラム：ロボット紹介＋プロフィール */}
         <aside className="md:w-1/3 w-full flex flex-col gap-6">
-          {/* ロボット紹介 */}
           <Link
             href="/kobitolab/robot/i"
             className="no-underline hover:opacity-90 transition"
@@ -97,40 +116,41 @@ export default function KobitoLab() {
             </div>
           </Link>
 
-{/* プロフィールカード（LAB と同じスタイル） */}
-  <div className="relative bg-gradient-to-br from-[#ffffff] to-[#f6fff4] rounded-2xl shadow-lg border border-[#dfe8db] p-6 overflow-hidden">
+          {/* プロフィールカード */}
+          <div className="relative bg-gradient-to-br from-[#ffffff] to-[#f6fff4] rounded-2xl shadow-lg border border-[#dfe8db] p-6 overflow-hidden">
+            <div className="flex items-center gap-3 mb-3 relative z-10">
+              <Image
+                src="/profile_icon2.png"
+                alt="プロフィール"
+                width={48}
+                height={48}
+                className="rounded-full border border-[#6b8e23]"
+              />
+              <div>
+                <h3 className="text-lg font-bold text-[#4a6b34] leading-tight">タボ</h3>
+                <p className="text-gray-600 text-sm">KOBITO LAB 運営</p>
+              </div>
+            </div>
 
-    <div className="flex items-center gap-3 mb-3 relative z-10">
-      <Image
-        src="/profile_icon2.png"   // ← 例：プロフィールの丸アイコン画像
-        alt="プロフィール"
-        width={48}
-        height={48}
-        className="rounded-full border border-[#6b8e23]"
-      />
-      <div>
-        <h3 className="text-lg font-bold text-[#4a6b34] leading-tight">タボ</h3>
-        <p className="text-gray-600 text-sm">KOBITO LAB 運営</p>
-      </div>
-    </div>
+            <p className="text-gray-700 text-sm mb-4 leading-relaxed relative z-10">
+              個人でロボット相撲作っています🤖<br />
+              製作過程をゆるく発信しています。
+            </p>
 
-    <p className="text-gray-700 text-sm mb-4 leading-relaxed relative z-10">
-      個人でロボット相撲作っています🤖<br />  
-      製作過程をゆるく発信しています。
-    </p>
-
-    <div className="flex flex-col gap-2 border-t border-gray-200 pt-3 relative z-10">
-      <a href="https://x.com/namakeland" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#1DA1F2] hover:underline">
-        X（旧Twitter）
-      </a>
-      <a href="https://www.youtube.com/@kobitobase" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#FF0000] hover:underline">
-        YouTubeチャンネル
-      </a>
-    </div>
+            <div className="flex flex-col gap-2 border-t border-gray-200 pt-3 relative z-10">
+              <a href="https://x.com/namakeland" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#1DA1F2] hover:underline">
+                X（旧Twitter）
+              </a>
+              <a href="https://www.youtube.com/@kobitobase" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-[#FF0000] hover:underline">
+                YouTubeチャンネル
+              </a>
+            </div>
           </div>
         </aside>
       </div>
+
       <Footer />
-  </main>
+    </main>
   );
 }
+
