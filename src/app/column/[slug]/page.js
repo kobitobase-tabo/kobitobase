@@ -1,73 +1,46 @@
-import { client } from "@/sanity/client";
-import { urlFor } from "@/sanity/client";
-import Image from "next/image";
-import { PortableText } from "@portabletext/react";
+import { client } from "@/sanity/client"
+import { PortableText } from "@portabletext/react"
 
-async function getColumn(slug) {
-  const query = `*[_type == "column" && slug.current == $slug][0]{
-    title,
-    thumbnail,
-    body,
-    category
-  }`;
+export async function generateStaticParams() {
+  const query = `*[_type == "column"]{ slug }`
+  const posts = await client.fetch(query)
 
-  return await client.fetch(query, { slug });
+  return posts
+    .filter(post => post.slug && post.slug.current)
+    .map(post => ({
+      slug: post.slug.current,
+    }))
 }
 
-export default async function ColumnPage({ params }) {
-  const column = await getColumn(params.slug);
+export default async function Page({ params }) {
+  const query = `*[_type == "column" && slug.current == $slug][0]{
+    title,
+    body,
+    publishedAt,
+    thumbnail{
+      asset->{url}
+    }
+  }`
 
-  if (!column) {
-    return <p>記事が見つかりませんでした。</p>;
+  const post = await client.fetch(query, { slug: params.slug })
+
+  if (!post) {
+    return <div>記事が見つかりませんでした。</div>
   }
 
-  const components = {
-    types: {
-      speech: ({ value }) => (
-        <div style={{ display: "flex", margin: "1.5em 0" }}>
-          {value.icon && (
-            <Image
-              src={urlFor(value.icon).width(60).height(60).url()}
-              alt=""
-              width={60}
-              height={60}
-              style={{ borderRadius: "50%", marginRight: "12px" }}
-            />
-          )}
-          <div
-            style={{
-              background: "#fffaf1",
-              border: "1px solid #e8dfc8",
-              borderRadius: "8px",
-              padding: "12px 16px",
-              lineHeight: "1.6",
-              maxWidth: "500px",
-            }}
-          >
-            {value.text}
-          </div>
-        </div>
-      ),
-    },
-  };
-
   return (
-    <main className="max-w-3xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold text-[#375a2c] mb-6">{column.title}</h1>
-
-      {column.thumbnail && (
-        <Image
-          src={urlFor(column.thumbnail).width(800).url()}
-          alt={column.title}
-          width={800}
-          height={450}
-          className="rounded mb-6"
+    <main style={{ padding: "2rem", maxWidth: "720px", margin: "0 auto" }}>
+      {post.thumbnail?.asset?.url && (
+        <img
+          src={post.thumbnail.asset.url}
+          alt={post.title}
+          style={{ width: "100%", borderRadius: "6px", marginBottom: "1.5rem" }}
         />
       )}
 
-      <article className="prose prose-neutral">
-        <PortableText value={column.body} components={components} />
-      </article>
+      <h1 style={{ fontSize: "2rem", marginBottom: "1rem" }}>{post.title}</h1>
+
+      <PortableText value={post.body} />
     </main>
-  );
+  )
 }

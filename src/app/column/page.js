@@ -1,63 +1,38 @@
-import Link from "next/link";
-import Image from "next/image";
-import { client } from "@/sanity/client";
-import { urlFor } from "@/sanity/client";
+import Link from "next/link"
+import { client } from "@/sanity/client"
 
-export const revalidate = 60; // 60秒ごとにキャッシュ更新（お好み）
-
-async function getColumns() {
-  const query = `*[_type == "column"] | order(_createdAt desc) {
-    _id,
+export default async function Page() {
+  const query = `*[_type == "column"] | order(_createdAt desc){
     title,
-    thumbnail,
-    category,
-    body
-  }`;
+    slug,
+    publishedAt,
+    thumbnail{
+      asset->{url}
+    }
+  }`
 
-  return await client.fetch(query);
-}
-
-export default async function ColumnList() {
-  const columns = await getColumns();
+  const posts = await client.fetch(query)
 
   return (
-    <main className="min-h-screen bg-[#f9fff7] px-4 py-10 flex flex-col items-center">
-      <h1 className="text-3xl font-bold text-[#4a6b34] mb-8">読み物（コラム）一覧</h1>
+    <main style={{ padding: "2rem" }}>
+      <h1 style={{ fontSize: "2rem", marginBottom: "1.5rem" }}>コラム一覧</h1>
 
-      <div className="grid gap-6 max-w-4xl w-full grid-cols-1 sm:grid-cols-2">
-        {columns.map((item) => (
-          <Link
-            key={item._id}
-            href={`/column/${item.slug.current}`}
-            className="block group bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden"
-          >
-            {item.thumbnail && (
-              <Image
-                src={urlFor(item.thumbnail).width(600).height(350).url()}
-                alt={item.title}
-                width={600}
-                height={350}
-                className="object-cover w-full h-40"
-              />
-            )}
-            <div className="p-4">
-              <h2 className="font-bold text-lg text-[#375a2c] group-hover:underline">
-                {item.title}
-              </h2>
-
-              <p className="text-xs text-gray-500 mt-1">
-                {item.category === "garden" && "🌱 園芸"}
-                {item.category === "robot" && "🤖 ロボット相撲"}
-                {item.category === "base" && "🏠 BASE"}
-              </p>
-            </div>
-          </Link>
+      <ul style={{ display: "grid", gap: "1.5rem" }}>
+        {posts.map((post) => (
+          <li key={post.slug.current} style={{ borderBottom: "1px solid #ddd", paddingBottom: "1rem" }}>
+            <Link href={`/column/${post.slug.current}`} style={{ textDecoration: "none", color: "inherit" }}>
+              {post.thumbnail?.asset?.url && (
+                <img
+                  src={post.thumbnail.asset.url}
+                  alt={post.title}
+                  style={{ width: "100%", maxWidth: "400px", borderRadius: "6px" }}
+                />
+              )}
+              <h2 style={{ fontSize: "1.25rem", marginTop: "0.5rem" }}>{post.title}</h2>
+            </Link>
+          </li>
         ))}
-      </div>
-
-      <Link href="/kobitononiwa" className="mt-10 px-6 py-3 bg-[#8b7355] text-white rounded-xl hover:bg-[#7a6549] transition shadow">
-        ← こびとのにわへ戻る
-      </Link>
+      </ul>
     </main>
-  );
+  )
 }
