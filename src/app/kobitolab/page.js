@@ -7,11 +7,12 @@ import { urlFor } from "../../sanity/lib/image";
 
 async function getColumns() {
   const query = `*[_type == "column" && !(category match "にわ")] | order(_createdAt desc){
-  title,
-  "thumbnailUrl": thumbnail.asset->url,
-  category,
-  slug
-}`;
+    title,
+    mainImage,
+    category,
+    slug
+  }`;
+
   return await client.fetch(query);
 }
 
@@ -58,15 +59,15 @@ export default async function KobitoLab() {
                 href={`/kobitolab/column/${col.slug.current}`}
                 className="block bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
               >
-                {col.thumbnailUrl && (
-                  <Image
-                    src={col.thumbnailUrl}
-                    alt={col.title}
-                    width={600}
-                    height={400}
-                    className="w-full h-48 object-cover"
-                  />
-                )}
+                {col.mainImage?.asset && (
+  <Image
+    src={urlFor(col.mainImage).width(600).height(400).url()}
+    alt={col.title}
+    width={600}
+    height={400}
+    className="w-full h-48 object-cover"
+  />
+)}
                 <div className="p-4">
                   {col.category && (
                     <span className="text-xs px-2 py-1 bg-[#e7efe3] rounded text-[#375a2c]">
