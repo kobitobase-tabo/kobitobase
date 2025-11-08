@@ -114,35 +114,18 @@ export default function Kobitonoiwa() {
           </section>
 
         {/* 読みもの（コラム） */}
-        <section className="w-full max-w-3xl mb-12 bg-white rounded-2xl shadow p-6">
-          <h2 className="text-2xl font-bold text-[#4a6b34] mb-4">📚 読みもの（コラム）</h2>
+<section className="w-full max-w-3xl mb-12 bg-white rounded-2xl shadow p-6">
+  <h2 className="text-2xl font-bold text-[#4a6b34] mb-4">📚 読みもの（コラム）</h2>
 
-          <ul className="space-y-3 text-[#375a2c]">
-            <li>
-              <Link href="/kobitononiwa/column/slit-pot" className="hover:underline">
-                 スリット鉢のメリット・デメリット
-              </Link>
-           </li>
-           <li>
-              <Link href="/kobitononiwa/column/HiryoVsKatsuryokuzai" className="hover:underline">
-                 肥料と活力剤の違い
-              </Link>
-           </li>
-           <li>
-              <Link href="/kobitononiwa/column/winter-care" className="hover:underline">
-                 冬のベランダで枯らさないポイント
-              </Link>
-           </li>
-        </ul>
+  {/* ✨ 記事リストは Sanity で管理するので削除 */}
 
-        <Link
-          href="/kobitononiwa/column"
-          className="block text-right text-sm text-[#6b8e23] hover:underline mt-4"
-        >
-          → もっと見る
-        </Link>
-      </section>
- 
+  <Link
+    href="/kobitononiwa/column"
+    className="block text-right text-sm text-[#6b8e23] hover:underline mt-4"
+  >
+    → もっと見る
+  </Link>
+</section>
 
           {/* 戻る */}
           <Link href="/" className="px-6 py-3 bg-[#8b7355] text-white rounded-xl shadow hover:bg-[#7a6549] transition">

@@ -1,50 +1,62 @@
-"use client";
-
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import { client } from "@/sanity/client";
+import imageUrlBuilder from "@sanity/image-url";
 
-export default function ColumnList() {
-  // ここに読み物(コラム)一覧を追加していく
-  const columns = [
-    {
-      title: "スリット鉢のメリット・デメリット",
-      thumb: "/column/slitpot_thumb.jpg",
-      link: "/kobitononiwa/column/slitpot",
-      desc: "根の回り方が変わる？育つ植物が変わる？スリット鉢の本当の特徴。",
-    },
-    {
-      title: "肥料と活力剤の違い",
-      thumb: "/column/fertilizer_thumb.jpg",
-      link: "/kobitononiwa/column/fertilizer",
-      desc: "「肥料」と「活力剤」、同じように見えて役割が全然違います。",
-    },
-  ];
+const builder = imageUrlBuilder(client);
+function urlFor(source) {
+  return builder.image(source);
+}
+
+export const revalidate = 60; // サーバー再検証（自動更新）
+
+export default async function NiwaColumnList() {
+  const query = `*[_type == "column" && category match "にわ"] | order(_updatedAt desc){
+    title,
+    slug,
+    "date": _updatedAt,
+    mainImage
+  }`;
+
+  const posts = await client.fetch(query);
 
   return (
-    <main className="min-h-screen bg-[#f9fff7] px-4 py-10 flex flex-col items-center">
-      <h1 className="text-3xl font-bold text-[#4a6b34] mb-8">読み物（コラム）一覧</h1>
+    <main className="max-w-4xl mx-auto pt-10 pb-20 px-4">
+      <h1 className="text-3xl font-bold text-[#4a6b34] mb-8">
+        🌱 こびとのにわのコラム一覧
+      </h1>
 
-      <div className="grid gap-6 max-w-4xl w-full grid-cols-1 sm:grid-cols-2">
-        {columns.map((item, i) => (
-          <Link key={i} href={item.link} className="block group bg-white rounded-xl shadow hover:shadow-lg transition overflow-hidden">
-            <Image
-              src={item.thumb}
-              alt={item.title}
-              width={600}
-              height={350}
-              className="object-cover w-full h-40"
-            />
+      {posts.length === 0 && (
+        <p className="text-gray-500">まだコラムがありません。</p>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {posts.map((post) => (
+          <Link
+            key={post.slug.current}
+            href={`/kobitononiwa/${post.slug.current}`}
+            className="bg-white rounded-xl shadow hover:shadow-md transition overflow-hidden"
+          >
+            {post.mainImage && (
+              <Image
+                src={urlFor(post.mainImage).width(800).height(600).url()}
+                alt={post.title}
+                width={800}
+                height={600}
+                className="h-48 w-full object-cover"
+              />
+            )}
             <div className="p-4">
-              <h2 className="font-bold text-lg text-[#375a2c] group-hover:underline">{item.title}</h2>
-              <p className="text-gray-600 text-sm mt-2">{item.desc}</p>
+              <h2 className="text-lg font-semibold text-[#375a2c]">
+                {post.title}
+              </h2>
+              <p className="text-sm text-gray-500 mt-1">
+                更新日：{post.date.split("T")[0]}
+              </p>
             </div>
           </Link>
         ))}
       </div>
-
-      <Link href="/kobitononiwa" className="mt-10 px-6 py-3 bg-[#8b7355] text-white rounded-xl hover:bg-[#7a6549] transition shadow">
-        ← こびとのにわへ戻る
-      </Link>
     </main>
   );
 }
