@@ -21,7 +21,9 @@ export default async function NiwaColumnList() {
   const posts = await client.fetch(query);
 
   return (
-    <main className="max-w-4xl mx-auto pt-10 pb-20 px-4">
+    <main className="max-w-4xl mx-auto pt-10 pb-20 px-4"
+  style={{ backgroundColor: "#f8f8f4", minHeight: "100vh" }}
+    >
       <h1 className="text-3xl font-bold text-[#4a6b34] mb-8">
         🌱 こびとのにわのコラム一覧
       </h1>
@@ -30,7 +32,7 @@ export default async function NiwaColumnList() {
         <p className="text-gray-500">まだコラムがありません。</p>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-6">
         {posts.map((post) => (
           <Link
             key={post.slug.current}
