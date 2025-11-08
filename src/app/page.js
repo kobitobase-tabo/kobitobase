@@ -52,7 +52,7 @@ export default function Home() {
         data.map((item) => ({
           title: item.title,
           date: item.date.split("T")[0],
-          link: `/kobitolab/${item.slug.current}`,
+          link: `/kobitolab/column/${item.slug.current}`,
         }))
       );
     };
