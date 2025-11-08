@@ -8,7 +8,7 @@ import { urlFor } from "../../sanity/lib/image";
 async function getColumns() {
   const query = `*[_type == "column" && !(category match "にわ")] | order(_createdAt desc){
     title,
-    mainImage,
+    thumbnail,
     category,
     slug
   }`;
@@ -59,9 +59,9 @@ export default async function KobitoLab() {
                 href={`/kobitolab/column/${col.slug.current}`}
                 className="block bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
               >
-                {col.mainImage?.asset && (
+                {col.thumbnail.asset && (
   <Image
-    src={urlFor(col.mainImage).width(600).height(400).url()}
+    src={urlFor(col.thumbnail).width(600).height(400).url()}
     alt={col.title}
     width={600}
     height={400}
