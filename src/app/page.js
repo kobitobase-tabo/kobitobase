@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import Footer from "@/components/Footer";
-import { client } from "../sanity/lib/client"; // ← 重要：このパスなら確実に存在します
+import { client } from "@/sanity/client"; // ← 重要：このパスなら確実に存在します
 
 // 更新日から7日以内なら New 表示
 const isNew = (dateString) => {
