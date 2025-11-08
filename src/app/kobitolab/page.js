@@ -6,7 +6,7 @@ import { client } from "../../sanity/lib/client";
 import { urlFor } from "../../sanity/lib/image";
 
 async function getColumns() {
-  const query = `*[_type == "column"] | order(_createdAt desc){
+  const query = `*[_type == "column" && !(category match "にわ")] | order(_createdAt desc){
     title,
     thumbnail,
     category,
@@ -55,7 +55,7 @@ export default async function KobitoLab() {
             {columns.map((col) => (
               <Link
                 key={col.slug.current}
-                href={`/kobitolab/report/${col.slug.current}`}
+                href={`/kobitolab/column/${col.slug.current}`}
                 className="block bg-white rounded-2xl shadow hover:shadow-lg transition overflow-hidden"
               >
                 {col.thumbnail && (
