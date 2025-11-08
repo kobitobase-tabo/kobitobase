@@ -1,5 +1,5 @@
-import { client } from "@/src/sanity/client";
-import { urlFor } from "@/src/sanity/client";
+import { client } from "@/sanity/client";
+import { urlFor } from "@/sanity/client";
 import Image from "next/image";
 import { PortableText } from "@portabletext/react";
 
